@@ -1,0 +1,25 @@
+@startuml
+!include _style.iuml
+title Diagrama de Implantacao - OficinaPro
+
+node "Dispositivo do Usuario" {
+  artifact "Navegador Web" as BR
+}
+node "Vercel (CDN)" {
+  artifact "Build estatico React (dist)" as DIST
+}
+node "AWS EC2 / Container Docker" as APP {
+  artifact "oficinapro-api.jar\n(Spring Boot)" as JAR
+}
+node "AWS RDS" {
+  database "PostgreSQL 16" as DB
+}
+cloud "Gateway de Pagamento\n(Stripe / PIX)" as PAY
+cloud "Servico de E-mail\n(SendGrid)" as MAIL
+
+BR --> DIST : HTTPS
+BR --> JAR : HTTPS / REST
+JAR --> DB : JDBC (porta 5432)
+JAR --> PAY : HTTPS / API
+JAR --> MAIL : SMTP / API
+@enduml

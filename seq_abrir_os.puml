@@ -1,0 +1,32 @@
+@startuml
+!include _style.iuml
+title Diagrama de Sequencia (projeto) - Abrir Ordem de Servico
+actor "Atendente" as ATE
+participant ":OrdemServicoController" as C
+participant ":OrdemServicoService" as S
+participant ":ClienteRepository" as CR
+participant ":VeiculoRepository" as VR
+participant ":OrdemServicoRepository" as OR
+
+ATE -> C : POST /ordens (clienteId, veiculoId, descricao)
+activate C
+C -> S : abrirOrdemServico(dto)
+activate S
+S -> CR : findById(clienteId)
+activate CR
+CR --> S : cliente
+deactivate CR
+S -> VR : findById(veiculoId)
+activate VR
+VR --> S : veiculo
+deactivate VR
+S -> S : new OrdemServico(cliente, veiculo, ABERTA)
+S -> OR : save(os)
+activate OR
+OR --> S : os(numero)
+deactivate OR
+S --> C : OrdemServicoDTO
+deactivate S
+C --> ATE : 201 Created (numeroOS)
+deactivate C
+@enduml

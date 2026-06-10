@@ -1,0 +1,25 @@
+@startuml
+!include _style.iuml
+title SSD - UC-05/06 Elaborar e Aprovar Orcamento
+actor "Atendente" as ATE
+actor "Cliente" as CLI
+participant ":Sistema" as SYS
+ATE -> SYS : iniciarOrcamento(numeroOS)
+activate SYS
+SYS --> ATE : orcamentoId
+deactivate SYS
+loop para cada item (servico ou peca)
+  ATE -> SYS : adicionarItemOrcamento(orcamentoId, tipo, refId, quantidade)
+  activate SYS
+  SYS --> ATE : subtotal, valorTotalParcial
+  deactivate SYS
+end
+ATE -> SYS : fecharOrcamento(orcamentoId)
+activate SYS
+SYS --> ATE : valorTotal, prazoEstimado
+deactivate SYS
+CLI -> SYS : aprovarOrcamento(orcamentoId, decisao)
+activate SYS
+SYS --> CLI : statusOrcamento, statusOS
+deactivate SYS
+@enduml

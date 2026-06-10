@@ -1,0 +1,14 @@
+@startuml
+!include _style.iuml
+title SSD - UC-08 Registrar Pagamento
+actor "Atendente" as ATE
+participant ":Sistema" as SYS
+ATE -> SYS : fecharOS(numeroOS)
+activate SYS
+SYS --> ATE : valorTotal
+deactivate SYS
+ATE -> SYS : registrarPagamento(numeroOS, formaPagamento, valor)
+activate SYS
+SYS --> ATE : statusPagamento, comprovante
+deactivate SYS
+@enduml

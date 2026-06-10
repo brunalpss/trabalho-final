@@ -1,0 +1,51 @@
+@startuml
+!include _style.iuml
+title Diagrama de Casos de Uso - OficinaPro
+left to right direction
+
+actor "Cliente" as CLI
+actor "Atendente" as ATE
+actor "Mecanico" as MEC
+actor "Gerente" as GER
+actor "Gateway de\nPagamento" as PAY <<sistema>>
+actor "Fornecedor" as FOR <<sistema>>
+
+rectangle "OficinaPro" {
+  usecase "UC-01\nCadastrar Cliente e Veiculo" as UC01
+  usecase "UC-02\nAgendar Servico" as UC02
+  usecase "UC-03\nAbrir Ordem de Servico" as UC03
+  usecase "UC-04\nRealizar Diagnostico" as UC04
+  usecase "UC-05\nElaborar Orcamento" as UC05
+  usecase "UC-06\nAprovar / Recusar Orcamento" as UC06
+  usecase "UC-07\nExecutar Servico" as UC07
+  usecase "UC-08\nRegistrar Pagamento" as UC08
+  usecase "UC-09\nGerenciar Estoque de Pecas" as UC09
+  usecase "UC-10\nGerar Relatorios Gerenciais" as UC10
+  usecase "UC-11\nGerenciar Catalogo de Servicos" as UC11
+  usecase "Consultar\nEstoque" as UCE
+  usecase "Baixar Pecas\ndo Estoque" as UCB
+  usecase "Processar\nPagamento" as UCP
+  usecase "Solicitar\nReposicao" as UCR
+}
+
+CLI --> UC02
+CLI --> UC06
+ATE --> UC01
+ATE --> UC02
+ATE --> UC03
+ATE --> UC05
+ATE --> UC08
+MEC --> UC04
+MEC --> UC07
+GER --> UC09
+GER --> UC10
+GER --> UC11
+
+UC05 ..> UCE : <<include>>
+UC07 ..> UCB : <<include>>
+UC08 ..> UCP : <<include>>
+UC09 ..> UCR : <<extend>>
+UCP --> PAY
+UCR --> FOR
+
+@enduml

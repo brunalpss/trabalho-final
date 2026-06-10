@@ -1,0 +1,19 @@
+@startuml
+!include _style.iuml
+title Diagrama de Comunicacao - Elaborar Orcamento (UC-05)
+object ":Atendente" as ATE
+object ":OrcamentoController" as C
+object ":OrcamentoService" as S
+object ":Estoque" as E
+object ":OrcamentoRepository" as R
+
+ATE --> C : 1: adicionarItem(orcId, peca, qtd)
+C --> S : 2: adicionarItemPeca(orcId, pecaId, qtd)
+S --> E : 3: consultarDisponibilidade(pecaId, qtd)
+E --> S : 3.1: disponivel
+S --> S : 4: recalcularTotal()
+S --> R : 5: save(orcamento)
+R --> S : 5.1: orcamento
+S --> C : 6: OrcamentoDTO
+C --> ATE : 7: subtotal, valorTotal
+@enduml

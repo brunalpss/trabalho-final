@@ -1,0 +1,11 @@
+@startuml
+!include _style.iuml
+title Diagrama de Estados - Orcamento
+[*] --> EmElaboracao : iniciarOrcamento()
+EmElaboracao --> EmElaboracao : adicionarItem()
+EmElaboracao --> Enviado : fecharOrcamento()
+Enviado --> Aprovado : aprovar()
+Enviado --> Recusado : recusar()
+Aprovado --> [*]
+Recusado --> [*]
+@enduml

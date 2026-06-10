@@ -1,0 +1,15 @@
+@startuml
+!include _style.iuml
+title Diagrama de Estados - Ordem de Servico
+[*] --> Aberta : abrirOS()
+Aberta --> EmDiagnostico : iniciarDiagnostico()
+EmDiagnostico --> AguardandoAprovacao : enviarOrcamento()
+AguardandoAprovacao --> EmExecucao : orcamentoAprovado()
+AguardandoAprovacao --> Cancelada : orcamentoRecusado()
+EmExecucao --> Concluida : finalizarServico()
+Concluida --> Faturada : registrarPagamento()
+Faturada --> [*]
+Aberta --> Cancelada : cancelar()
+EmDiagnostico --> Cancelada : cancelar()
+Cancelada --> [*]
+@enduml

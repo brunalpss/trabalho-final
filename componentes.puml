@@ -1,0 +1,36 @@
+@startuml
+!include _style.iuml
+title Diagrama de Componentes - OficinaPro
+
+component "Frontend SPA\n(React)" as FE
+component "API Gateway /\nController Layer" as API
+component "Modulo de\nAutenticacao" as AUTH
+component "Modulo de\nOrdem de Servico" as MOS
+component "Modulo de\nOrcamento" as MORC
+component "Modulo de\nEstoque" as MEST
+component "Modulo\nFinanceiro" as MFIN
+component "Modulo de\nRelatorios" as MREL
+component "Camada de\nPersistencia (JPA)" as PERS
+
+interface "REST/JSON" as IR
+interface "JDBC" as IJ
+
+FE --( IR
+IR - API
+API --> AUTH
+API --> MOS
+API --> MORC
+API --> MEST
+API --> MFIN
+API --> MREL
+MOS --> MORC
+MORC --> MEST
+MOS --> MFIN
+MOS ..> PERS
+MORC ..> PERS
+MEST ..> PERS
+MFIN ..> PERS
+MREL ..> PERS
+PERS --( IJ
+MFIN --> [Gateway Pagamento] : <<external>>
+@enduml

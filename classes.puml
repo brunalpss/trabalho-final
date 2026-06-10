@@ -1,0 +1,135 @@
+@startuml
+!include _style.iuml
+title Diagrama de Classes - OficinaPro
+skinparam linetype ortho
+
+enum StatusOS {
+  ABERTA
+  EM_DIAGNOSTICO
+  AGUARDANDO_APROVACAO
+  EM_EXECUCAO
+  CONCLUIDA
+  FATURADA
+  CANCELADA
+}
+enum StatusOrcamento {
+  EM_ELABORACAO
+  ENVIADO
+  APROVADO
+  RECUSADO
+}
+enum FormaPagamento {
+  DINHEIRO
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+  PIX
+}
+
+abstract class Funcionario {
+  -id: Long
+  -nome: String
+  -cpf: String
+  -login: String
+}
+class Atendente
+class Mecanico {
+  -especialidade: String
+}
+class Gerente
+
+class Cliente {
+  -id: Long
+  -nome: String
+  -cpf: String
+  -telefone: String
+  -email: String
+}
+class Veiculo {
+  -id: Long
+  -placa: String
+  -marca: String
+  -modelo: String
+  -ano: int
+  -km: int
+}
+class Agendamento {
+  -id: Long
+  -dataHora: DateTime
+  -status: String
+}
+class OrdemServico {
+  -numero: Long
+  -dataAbertura: DateTime
+  -descricaoProblema: String
+  -status: StatusOS
+  +calcularTotal(): BigDecimal
+  +adicionarItem(item): void
+}
+class Orcamento {
+  -id: Long
+  -dataEmissao: Date
+  -status: StatusOrcamento
+  -valorTotal: BigDecimal
+  +aprovar(): void
+  +recusar(): void
+}
+abstract class ItemOrcamento {
+  -id: Long
+  -quantidade: int
+  -valorUnitario: BigDecimal
+  +subtotal(): BigDecimal
+}
+class ItemServico
+class ItemPeca
+class Servico {
+  -id: Long
+  -descricao: String
+  -valorMaoObra: BigDecimal
+  -tempoEstimado: int
+}
+class Peca {
+  -id: Long
+  -codigo: String
+  -nome: String
+  -precoVenda: BigDecimal
+}
+class Estoque {
+  -quantidadeDisponivel: int
+  -estoqueMinimo: int
+  +baixar(qtd): void
+  +repor(qtd): void
+}
+class MovimentacaoEstoque {
+  -id: Long
+  -tipo: String
+  -quantidade: int
+  -data: DateTime
+}
+class Pagamento {
+  -id: Long
+  -valor: BigDecimal
+  -forma: FormaPagamento
+  -dataHora: DateTime
+  -comprovante: String
+}
+
+Funcionario <|-- Atendente
+Funcionario <|-- Mecanico
+Funcionario <|-- Gerente
+ItemOrcamento <|-- ItemServico
+ItemOrcamento <|-- ItemPeca
+
+Cliente "1" --> "0..*" Veiculo : possui
+Cliente "1" --> "0..*" Agendamento : solicita
+Veiculo "1" --> "0..*" OrdemServico : gera
+Agendamento "0..1" --> "0..1" OrdemServico : origina
+OrdemServico "1" --> "1" Orcamento : contem
+OrdemServico "0..*" --> "1" Mecanico : atribuida a
+OrdemServico "0..*" --> "1" Atendente : registrada por
+Orcamento "1" o-- "1..*" ItemOrcamento : composto por
+ItemServico "0..*" --> "1" Servico : refere
+ItemPeca "0..*" --> "1" Peca : refere
+Peca "1" --> "1" Estoque : controlado em
+Estoque "1" --> "0..*" MovimentacaoEstoque : registra
+OrdemServico "1" --> "0..1" Pagamento : quitada por
+@enduml

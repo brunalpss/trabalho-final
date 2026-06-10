@@ -1,0 +1,119 @@
+@startuml
+!include _style.iuml
+title Modelo de Dados (Entidade-Relacionamento) - OficinaPro
+skinparam linetype ortho
+
+entity "cliente" as cli {
+  *id : BIGINT <<PK>>
+  --
+  nome : VARCHAR(120)
+  cpf : VARCHAR(11) <<UK>>
+  telefone : VARCHAR(20)
+  email : VARCHAR(120)
+}
+entity "veiculo" as vei {
+  *id : BIGINT <<PK>>
+  --
+  cliente_id : BIGINT <<FK>>
+  placa : VARCHAR(7) <<UK>>
+  marca : VARCHAR(40)
+  modelo : VARCHAR(60)
+  ano : INT
+  km : INT
+}
+entity "funcionario" as fun {
+  *id : BIGINT <<PK>>
+  --
+  nome : VARCHAR(120)
+  cpf : VARCHAR(11) <<UK>>
+  login : VARCHAR(40) <<UK>>
+  tipo : VARCHAR(20)
+  especialidade : VARCHAR(60)
+}
+entity "ordem_servico" as os {
+  *numero : BIGINT <<PK>>
+  --
+  veiculo_id : BIGINT <<FK>>
+  atendente_id : BIGINT <<FK>>
+  mecanico_id : BIGINT <<FK>>
+  data_abertura : TIMESTAMP
+  descricao_problema : TEXT
+  status : VARCHAR(25)
+}
+entity "orcamento" as orc {
+  *id : BIGINT <<PK>>
+  --
+  ordem_servico_id : BIGINT <<FK,UK>>
+  data_emissao : DATE
+  status : VARCHAR(20)
+  valor_total : NUMERIC(10,2)
+}
+entity "item_orcamento" as item {
+  *id : BIGINT <<PK>>
+  --
+  orcamento_id : BIGINT <<FK>>
+  tipo : VARCHAR(10)
+  servico_id : BIGINT <<FK>>
+  peca_id : BIGINT <<FK>>
+  quantidade : INT
+  valor_unitario : NUMERIC(10,2)
+}
+entity "servico" as srv {
+  *id : BIGINT <<PK>>
+  --
+  descricao : VARCHAR(120)
+  valor_mao_obra : NUMERIC(10,2)
+  tempo_estimado_min : INT
+}
+entity "peca" as pec {
+  *id : BIGINT <<PK>>
+  --
+  codigo : VARCHAR(30) <<UK>>
+  nome : VARCHAR(120)
+  preco_venda : NUMERIC(10,2)
+}
+entity "estoque" as est {
+  *peca_id : BIGINT <<PK,FK>>
+  --
+  quantidade_disponivel : INT
+  estoque_minimo : INT
+}
+entity "movimentacao_estoque" as mov {
+  *id : BIGINT <<PK>>
+  --
+  peca_id : BIGINT <<FK>>
+  tipo : VARCHAR(10)
+  quantidade : INT
+  data : TIMESTAMP
+}
+entity "pagamento" as pag {
+  *id : BIGINT <<PK>>
+  --
+  ordem_servico_id : BIGINT <<FK,UK>>
+  valor : NUMERIC(10,2)
+  forma : VARCHAR(20)
+  data_hora : TIMESTAMP
+  comprovante : VARCHAR(60)
+}
+entity "agendamento" as age {
+  *id : BIGINT <<PK>>
+  --
+  cliente_id : BIGINT <<FK>>
+  veiculo_id : BIGINT <<FK>>
+  data_hora : TIMESTAMP
+  status : VARCHAR(20)
+}
+
+cli ||--o{ vei
+cli ||--o{ age
+vei ||--o{ os
+vei ||--o{ age
+fun ||--o{ os
+os ||--|| orc
+orc ||--|{ item
+srv ||--o{ item
+pec ||--o{ item
+pec ||--|| est
+pec ||--o{ mov
+os ||--o| pag
+@enduml

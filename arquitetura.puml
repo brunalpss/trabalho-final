@@ -1,0 +1,45 @@
+@startuml
+!include _style.iuml
+title Arquitetura em Camadas - OficinaPro (estilo C4 / Clean Architecture)
+
+actor "Usuario" as U
+
+package "Camada de Apresentacao" #EAF2FB {
+  [SPA React + Vite] as FE
+}
+package "Camada de API (REST)" #F4F8FD {
+  [Controllers REST] as CTRL
+  [Filtros / Spring Security (JWT)] as SEC
+}
+package "Camada de Aplicacao" #F4F8FD {
+  [Casos de Uso / Services] as APP
+  [DTOs / Mappers] as DTO
+}
+package "Camada de Dominio" #F0F7EE {
+  [Entidades de Dominio] as DOM
+  [Regras de Negocio] as RN
+}
+package "Camada de Infraestrutura" #F4F8FD {
+  [Repositorios (Spring Data JPA)] as REPO
+  [Adapter Gateway Pagamento] as ADPAY
+  [Adapter Notificacao (e-mail)] as ADMAIL
+}
+
+database "PostgreSQL" as DB
+cloud "Gateway de Pagamento" as PAY
+cloud "Servico de E-mail" as MAIL
+
+U --> FE
+FE --> SEC : HTTPS / JSON
+SEC --> CTRL
+CTRL --> APP
+APP --> DTO
+APP --> DOM
+DOM --> RN
+APP --> REPO
+APP --> ADPAY
+APP --> ADMAIL
+REPO --> DB
+ADPAY --> PAY
+ADMAIL --> MAIL
+@enduml

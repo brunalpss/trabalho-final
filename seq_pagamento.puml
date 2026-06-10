@@ -1,0 +1,37 @@
+@startuml
+!include _style.iuml
+title Diagrama de Sequencia (projeto) - Registrar Pagamento
+actor "Atendente" as ATE
+participant ":PagamentoController" as C
+participant ":PagamentoService" as S
+participant ":OrdemServicoRepository" as OR
+participant ":GatewayPagamentoAdapter" as G
+participant ":PagamentoRepository" as PR
+
+ATE -> C : POST /ordens/{n}/pagamentos (forma, valor)
+activate C
+C -> S : registrarPagamento(n, forma, valor)
+activate S
+S -> OR : findByNumero(n)
+activate OR
+OR --> S : os
+deactivate OR
+S -> G : processar(valor, forma)
+activate G
+G --> S : transacaoId, aprovado
+deactivate G
+alt pagamento aprovado
+  S -> S : os.faturar()
+  S -> PR : save(pagamento)
+  activate PR
+  PR --> S : pagamento
+  deactivate PR
+  S -> OR : update(os: FATURADA)
+  S --> C : ComprovanteDTO
+else recusado
+  S --> C : erro(pagamentoRecusado)
+end
+deactivate S
+C --> ATE : resposta
+deactivate C
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+!include _style.iuml
+title SSD - UC-03 Abrir Ordem de Servico
+actor "Atendente" as ATE
+participant ":Sistema" as SYS
+ATE -> SYS : abrirOrdemServico(clienteId, veiculoId, descricaoProblema)
+activate SYS
+SYS --> ATE : numeroOS, statusInicial
+deactivate SYS
+ATE -> SYS : associarMecanico(numeroOS, mecanicoId)
+activate SYS
+SYS --> ATE : confirmacao
+deactivate SYS
+@enduml
